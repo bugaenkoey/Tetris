@@ -194,6 +194,9 @@ function onKeyDown(e) {
     case "ArrowUp":
       moveTetraminoUp();
       break;
+    case "Escape":
+      generateTetramino();
+      break;
   }
   draw();
 }
