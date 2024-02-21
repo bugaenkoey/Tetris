@@ -1,6 +1,6 @@
 // Ctrl Shift i
-
-const PLAYFIELD_COLUMS = 20;
+let pause = true;
+const PLAYFIELD_COLUMS = 10;
 const PLAYFIELD_ROWS = 20;
 const TETROMINO_NAMES = ["O", "J", "L", "S", "Z", "T", "I"];
 
@@ -164,8 +164,13 @@ function drawTetramino() {
         tetramino.column + column
       );
       console.log(cellIndex);
-      cells[cellIndex].classList.add(name);
-      console.log(cells);
+      try {
+        cells[cellIndex].classList.add(name);
+      } catch (error) {
+        console.log(" <<<<< --- Out --- >>>> ", error);
+        generateTetramino();
+      }
+      // console.log(cells);
     }
   }
 }
@@ -195,8 +200,13 @@ function onKeyDown(e) {
       moveTetraminoUp();
       break;
     case "Escape":
+      pause = !pause;
+      break;
+
+    case " ":
       generateTetramino();
       break;
+    // Space
   }
   draw();
 }
@@ -215,4 +225,24 @@ function moveTetraminoLeft() {
 }
 function moveTetraminoRight() {
   tetramino.column += 1;
+}
+
+let interval = 700;
+let intervalId = setInterval(gameLoop, interval);
+
+function gameLoop() {
+  if (pause) {
+    moveTetraminoDown();
+    draw();
+
+    // Зменшуємо інтервал на 500 мілісекунд
+    // interval -= 0.01;
+    // intervalId = setInterval(gameLoop, interval);
+  }
+  console.log(interval);
+
+  // Якщо інтервал менше або рівний 0, зупиняємо цикл
+  // if (interval <= 0) {
+  //   clearInterval(intervalId);
+  // }
 }

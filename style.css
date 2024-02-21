@@ -3,7 +3,10 @@
 }
 
 body {
-    background: linear-gradient(320deg, #b4b415, rgb(252, 2, 2));
+    background: linear-gradient(blue, rgb(19, 19, 252), rgb(250, 250, 27), yellow);
+    /* background: linear-gradient(blue, yellow); */
+    /* background: linear-gradient(direction, rgb(0, 87, 183) rgb(255, 215, 0)); */
+    /* background: linear-gradient(320deg, #b4b415, rgb(252, 2, 2)); */
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -15,11 +18,11 @@ body {
     background: rgb(3, 3, 73);
     padding: 0.5vh;
     display: grid;
-    grid-template-columns: repeat(20, auto);
+    grid-template-columns: repeat(10, auto);
     gap: 0.5vh;
 }
 
-.grid > div {
+.grid>div {
     height: min(4vh, 7vh);
     width: min(4vh, 7vh);
     background-color: rgba(128, 166, 166, 0.2);
@@ -30,21 +33,27 @@ body {
 .grid .O {
     background-color: blueviolet;
 }
-.grid .J{
+
+.grid .J {
     background-color: yellow;
 }
-.grid .L{
+
+.grid .L {
     background-color: blue;
 }
-.grid .S{
+
+.grid .S {
     background-color: greenyellow;
 }
-.grid .Z{
+
+.grid .Z {
     background-color: pink;
 }
-.grid .T{
+
+.grid .T {
     background-color: red;
 }
-.grid .I{
+
+.grid .I {
     background-color: orange;
 }
