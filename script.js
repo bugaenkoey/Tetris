@@ -10,7 +10,7 @@ function changeRandomBackground() {
   var randomIndex = Math.floor(Math.random() * backgrounds.length);
   // Встановлюємо новий фон
   body.style.background =
-    "url('../Img/fon3_1.png'),url('../Img/fon3_1.png'),url('../Img/" +
+    "url('Img/fon3_1.png'),url('Img/fon3_1.png'),url('Img/" +
     backgrounds[randomIndex] +
     "') no-repeat center center fixed";
   // "url('" + backgrounds[randomIndex] + "') no-repeat center center fixed";
