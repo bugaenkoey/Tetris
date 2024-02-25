@@ -1,4 +1,25 @@
 // Ctrl Shift i
+
+function changeRandomBackground() {
+  var body = document.body;
+
+  // Масив із зображеннями фону
+  var backgrounds = ["fon1.jpeg", "fon2.jpeg", "fon3.jpeg", "fon4.jpeg"];
+
+  // Генеруємо випадковий індекс
+  var randomIndex = Math.floor(Math.random() * backgrounds.length);
+  // Встановлюємо новий фон
+  body.style.background =
+    "url('/Img/fon3_1.png'),url('/Img/fon3_1.png'),url('/Img/" +
+    backgrounds[randomIndex] +
+    "') no-repeat center center fixed";
+  // "url('" + backgrounds[randomIndex] + "') no-repeat center center fixed";
+  body.style.backgroundSize = "cover";
+}
+
+let score = 0;
+let scoreDiv = document.getElementById("score");
+// changeRandomBackground();
 let pause = true;
 const PLAYFIELD_COLUMS = 10;
 const PLAYFIELD_ROWS = 20;
@@ -102,7 +123,6 @@ function rotateMatrix(matrix) {
       matrix[j][i] = temp;
     }
   }
-
   // Реверс кожного рядка матриці
   for (var i = 0; i < matrix.length; i++) {
     matrix[i].reverse();
@@ -130,7 +150,26 @@ function generateTetramino() {
     column: PLAYFIELD_COLUMS / 2 - 1,
   };
   console.log(tetramino);
+  score++;
+  updateScore(0);
 }
+
+//++++++++++
+function placeTetramino() {
+  const matrixSize = tetramino.matrix.length;
+  for (let row = 0; row < matrixSize; row++) {
+    for (let column = 0; column < matrixSize; column++) {
+      if (tetramino.matrix[row][column]) {
+        playfielf[tetramino.row + row][tetramino.column + column] =
+          tetramino.name;
+      }
+    }
+  }
+  checkField();
+  generateTetramino();
+}
+
+//-----------
 
 generatePlayField();
 generateTetramino();
@@ -147,11 +186,17 @@ function drawPlayField() {
       cells[cellIndex].classList.add(name);
 
       console.log(cells);
+      // debugger;
+    }
+    // debugger;
+    if (checkLine(row)) {
+      console.log("line", row);
     }
   }
 }
 
 function drawTetramino() {
+  // debugger;
   const name = tetramino.name;
   const tetraminoMatrixSize = tetramino.matrix.length;
   console.log(tetraminoMatrixSize);
@@ -164,13 +209,15 @@ function drawTetramino() {
         tetramino.column + column
       );
       console.log(cellIndex);
+      // debugger;
       try {
         cells[cellIndex].classList.add(name);
       } catch (error) {
         console.log(" <<<<< --- Out --- >>>> ", error);
-        generateTetramino();
+        // generateTetramino();
       }
       // console.log(cells);
+      if (!isValid()) generateTetramino();
     }
   }
 }
@@ -213,6 +260,11 @@ function onKeyDown(e) {
 
 function moveTetraminoDown() {
   tetramino.row += 1;
+  if (!isValid()) {
+    tetramino.row -= 1;
+    // generateTetramino();
+    placeTetramino();
+  }
 }
 
 function moveTetraminoUp() {
@@ -222,9 +274,15 @@ function moveTetraminoUp() {
 
 function moveTetraminoLeft() {
   tetramino.column -= 1;
+  if (!isValid()) {
+    tetramino.column += 1;
+  }
 }
 function moveTetraminoRight() {
   tetramino.column += 1;
+  if (!isValid()) {
+    tetramino.column -= 1;
+  }
 }
 
 let interval = 700;
@@ -245,4 +303,78 @@ function gameLoop() {
   // if (interval <= 0) {
   //   clearInterval(intervalId);
   // }
+}
+
+// ==========
+
+function isValid() {
+  const matrixsize = tetramino.matrix.length;
+  for (let row = 0; row < matrixsize; row++) {
+    for (let column = 0; column < matrixsize; column++) {
+      // if (tetramino.matrix[row][column]) continue;
+      if (isOutsideOfGameboard(row, column)) {
+        return false;
+      }
+      if (hasCollision(row, column)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function isOutsideOfGameboard(row, column) {
+  return (
+    tetramino.matrix[row][column] &&
+    (tetramino.column + column < 0 ||
+      tetramino.column + column >= PLAYFIELD_COLUMS ||
+      tetramino.row + row >= PLAYFIELD_ROWS)
+  );
+}
+
+function hasCollision(row, column) {
+  return (
+    tetramino.matrix[row][column] &&
+    playfielf[tetramino.row + row][tetramino.column + column]
+  );
+}
+
+function checkField() {
+  let lines = 0;
+  for (let row = playfielf.length - 1; row > 0; row--) {
+    if (checkLine(row)) {
+      lines++;
+      debugger;
+      muveDownPlayField(row);
+      row++;
+    }
+  }
+  // score += lines * 10;
+  updateScore(lines);
+  console.log("lines ", lines, "\nScore = ", score);
+}
+
+function checkLine(row) {
+  // debugger;
+  for (let column = 0; column < playfielf[row].length; column++) {
+    if (playfielf[row][column] == 0) return false;
+  }
+  return true;
+}
+
+function muveDownPlayField(row) {
+  for (row; row > 1; row--) {
+    for (let column = 0; column < playfielf[row].length; column++) {
+      playfielf[row][column] = playfielf[row - 1][column];
+    }
+  }
+
+  changeRandomBackground();
+}
+
+function updateScore(lines) {
+  score += lines * 10 * lines;
+
+  scoreDiv.innerText = "SCORE: " + score;
+  console.log("lines ", lines, "\nScore = ", score);
 }
