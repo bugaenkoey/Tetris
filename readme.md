@@ -1,4 +1,6 @@
 https://raw.githack.com/bugaenkoey/Tetris/dev/index.html
+https://raw.githack.com/bugaenkoey/Tetris/dev2/index.html
+https://bugaenkoey.github.io/Tetris/
 
 // ДЗ №1
 // 1. Додати нові фігури
