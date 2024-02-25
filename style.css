@@ -42,9 +42,9 @@
 
 body {
     background:
-        url("/Img/fon3_1.png"),
-        url("/Img/fon3_1.png"),
-        url("/Img/fon1.jpeg");
+        url("Img/fon3_1.png"),
+        url("Img/fon3_1.png"),
+        url("Img/fon1.jpeg");
     /* url("/Img/fon1.jpeg"); */
     background-repeat: repeat-x;
     background-size: cover;

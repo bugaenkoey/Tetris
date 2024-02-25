@@ -10,13 +10,13 @@ function changeRandomBackground() {
   var randomIndex = Math.floor(Math.random() * backgrounds.length);
   // Встановлюємо новий фон
   body.style.background =
-    "url('/Img/fon3_1.png'),url('/Img/fon3_1.png'),url('/Img/" +
+    "url('../Img/fon3_1.png'),url('../Img/fon3_1.png'),url('../Img/" +
     backgrounds[randomIndex] +
     "') no-repeat center center fixed";
   // "url('" + backgrounds[randomIndex] + "') no-repeat center center fixed";
   body.style.backgroundSize = "cover";
 }
-
+let runGame = true;
 let score = 0;
 let scoreDiv = document.getElementById("score");
 // changeRandomBackground();
@@ -130,6 +130,7 @@ function rotateMatrix(matrix) {
 }
 
 function generateTetramino() {
+  if (!runGame) return;
   //Випадкова фігура
   const rndTetramino = Math.floor(Math.random() * TETROMINO_NAMES.length);
 
@@ -185,7 +186,7 @@ function drawPlayField() {
       const cellIndex = convertPositionToIndex(row, column);
       cells[cellIndex].classList.add(name);
 
-      console.log(cells);
+      // console.log(cells);
       // debugger;
     }
     // debugger;
@@ -203,7 +204,11 @@ function drawTetramino() {
 
   for (let row = 0; row < tetraminoMatrixSize; row++) {
     for (let column = 0; column < tetraminoMatrixSize; column++) {
-      if (!tetramino.matrix[row][column]) continue;
+      try {
+        if (!tetramino.matrix[row][column]) continue;
+      } catch (error) {
+        console.log(error, "\n", row, " ", column);
+      }
       const cellIndex = convertPositionToIndex(
         tetramino.row + row,
         tetramino.column + column
@@ -232,6 +237,9 @@ draw();
 document.addEventListener("keydown", onKeyDown);
 
 function onKeyDown(e) {
+  if (!runGame) {
+    return;
+  }
   console.log(e);
   switch (e.key) {
     case "ArrowDown":
@@ -292,17 +300,7 @@ function gameLoop() {
   if (pause) {
     moveTetraminoDown();
     draw();
-
-    // Зменшуємо інтервал на 500 мілісекунд
-    // interval -= 0.01;
-    // intervalId = setInterval(gameLoop, interval);
   }
-  console.log(interval);
-
-  // Якщо інтервал менше або рівний 0, зупиняємо цикл
-  // if (interval <= 0) {
-  //   clearInterval(intervalId);
-  // }
 }
 
 // ==========
@@ -313,6 +311,10 @@ function isValid() {
     for (let column = 0; column < matrixsize; column++) {
       // if (tetramino.matrix[row][column]) continue;
       if (isOutsideOfGameboard(row, column)) {
+        return false;
+      }
+      if (hasCollision(row, column) && tetramino.row == 0) {
+        gameOver();
         return false;
       }
       if (hasCollision(row, column)) {
@@ -377,4 +379,10 @@ function updateScore(lines) {
 
   scoreDiv.innerText = "SCORE: " + score;
   console.log("lines ", lines, "\nScore = ", score);
+}
+
+function gameOver() {
+  console.log(" G A M E  O V E R ");
+  clearInterval(intervalId);
+  runGame = false;
 }
