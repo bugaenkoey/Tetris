@@ -16,14 +16,24 @@ function changeRandomBackground() {
   // "url('" + backgrounds[randomIndex] + "') no-repeat center center fixed";
   body.style.backgroundSize = "cover";
 }
+
+const PLAYFIELD_COLUMS = 10;
+const PLAYFIELD_ROWS = 20;
+const TETROMINO_NAMES = ["O", "J", "L", "S", "Z", "T", "I"];
+
+let overlay = document.querySelector(".overlay");
+const btnRestart = document.querySelector(".btn-restart");
+btnRestart.addEventListener("click", () => {
+  // document.querySelector(".grid").innerHTML = "";
+  // overlay.style.display = "none";
+  restart();
+});
+
 let runGame = true;
 let score = 0;
 let scoreDiv = document.getElementById("score");
 // changeRandomBackground();
 let pause = true;
-const PLAYFIELD_COLUMS = 10;
-const PLAYFIELD_ROWS = 20;
-const TETROMINO_NAMES = ["O", "J", "L", "S", "Z", "T", "I"];
 
 const TETRAMINOES = {
   O: [
@@ -102,6 +112,63 @@ function convertPositionToIndex(row, column) {
 
 let playfielf;
 let tetramino;
+let nextPlayfielf;
+let nextTetramino;
+
+function generateNextPlayField() {
+  document.querySelector(".next").innerHTML = "";
+  nextMatrixSize = nextTetramino.matrix.length;
+  for (let row = 0; row < nextMatrixSize; row++) {
+    for (let column = 0; column < nextMatrixSize; column++) {
+      const div = document.createElement(`div`);
+      if (nextTetramino.matrix[row][column]) {
+        div.classList.add(nextTetramino.name);
+        // document.querySelector(".next").append(div);
+      }
+      div.classList.add("0");
+      document.querySelector(".next").append(div);
+    }
+  }
+  // nextPlayfielf = new Array(nextMatrixSize)
+  //   .fill()
+  //   .map(() => new Array(nextMatrixSize).fill(0));
+
+  document.querySelector(".next").style.gridTemplateColumns =
+    "repeat(" + nextMatrixSize + ", auto)";
+}
+
+// function drawNextTetramino() {
+//   // debugger;
+//   const name = nextTetramino.name;
+//   const nextMatrixSize = nextTetramino.matrix.length;
+//   // console.log(tetraminoMatrixSize);
+//   debugger;
+//   for (let row = 0; row < nextMatrixSize; row++) {
+//     for (let column = 0; column < nextMatrixSize; column++) {
+//       try {
+//         if (!nextTetramino.matrix[row][column]) continue;
+//       } catch (error) {
+//         // console.log(error, "\n", row, " ", column);
+//       }
+//       //return row * PLAYFIELD_COLUMS + column;
+//       const cellIndex = row * nextMatrixSize + column; //convertPositionToIndex(
+//       //   nextTetramino.row,
+//       //   nextTetramino.column
+//       // );
+//       // console.log(cellIndex);
+//       // debugger;
+//       try {
+//         // debugger;
+//         nextCells[cellIndex].classList.add(name);
+//       } catch (error) {
+//         // console.log(" <<<<< --- Out --- >>>> ", error);
+//         // generateTetramino();
+//       }
+//       // console.log(cells);
+//       // if (!isValid()) generateTetramino();
+//     }
+//   }
+// }
 
 function generatePlayField() {
   for (let i = 0; i < PLAYFIELD_ROWS * PLAYFIELD_COLUMS; i++) {
@@ -129,7 +196,7 @@ function rotateMatrix(matrix) {
   }
 }
 
-function generateTetramino() {
+function generateNextTetramino() {
   if (!runGame) return;
   //Випадкова фігура
   const rndTetramino = Math.floor(Math.random() * TETROMINO_NAMES.length);
@@ -144,18 +211,45 @@ function generateTetramino() {
     rotateMatrix(matrix);
   }
 
-  tetramino = {
+  nextTetramino = {
     name,
     matrix,
     row: 0,
     column: PLAYFIELD_COLUMS / 2 - 1,
   };
-  console.log(tetramino);
+
+  generateNextPlayField();
+  nextPlaceTetramino();
+  // drawNextTetramino();
+}
+
+function generateTetramino() {
+  if (!tetramino) {
+    generateNextTetramino();
+  }
+  tetramino = nextTetramino;
+
+  generateNextTetramino();
+
+  // nextPlaceTetramino();
+  console.log(" next: ", nextTetramino, "\n  carent: ", tetramino);
   score++;
   updateScore(0);
 }
 
-//++++++++++
+function nextPlaceTetramino() {
+  const matrixSize = nextTetramino.matrix.length;
+  for (let row = 0; row < matrixSize; row++) {
+    for (let column = 0; column < matrixSize; column++) {
+      // if (nextTetramino.matrix[row][column]) {
+      try {
+        nextPlayfielf[row][column] = nextTetramino.matrix[row][column].name;
+      } catch (error) {}
+      // }
+    }
+  }
+}
+
 function placeTetramino() {
   const matrixSize = tetramino.matrix.length;
   for (let row = 0; row < matrixSize; row++) {
@@ -170,12 +264,11 @@ function placeTetramino() {
   generateTetramino();
 }
 
-//-----------
-
 generatePlayField();
 generateTetramino();
+// generateNextTetramino();
 
-const cells = document.querySelectorAll(".grid div");
+let cells = document.querySelectorAll(".grid div");
 
 function drawPlayField() {
   for (let row = 0; row < PLAYFIELD_ROWS; row++) {
@@ -200,25 +293,25 @@ function drawTetramino() {
   // debugger;
   const name = tetramino.name;
   const tetraminoMatrixSize = tetramino.matrix.length;
-  console.log(tetraminoMatrixSize);
+  // console.log(tetraminoMatrixSize);
 
   for (let row = 0; row < tetraminoMatrixSize; row++) {
     for (let column = 0; column < tetraminoMatrixSize; column++) {
       try {
         if (!tetramino.matrix[row][column]) continue;
       } catch (error) {
-        console.log(error, "\n", row, " ", column);
+        // console.log(error, "\n", row, " ", column);
       }
       const cellIndex = convertPositionToIndex(
         tetramino.row + row,
         tetramino.column + column
       );
-      console.log(cellIndex);
+      // console.log(cellIndex);
       // debugger;
       try {
         cells[cellIndex].classList.add(name);
       } catch (error) {
-        console.log(" <<<<< --- Out --- >>>> ", error);
+        // console.log(" <<<<< --- Out --- >>>> ", error);
         // generateTetramino();
       }
       // console.log(cells);
@@ -231,6 +324,8 @@ function draw() {
   cells.forEach((cell) => cell.removeAttribute("class"));
   drawPlayField();
   drawTetramino();
+
+  // drawNextTetramino();
 }
 draw();
 
@@ -240,7 +335,7 @@ function onKeyDown(e) {
   if (!runGame) {
     return;
   }
-  console.log(e);
+  // console.log(e);
   switch (e.key) {
     case "ArrowDown":
       moveTetraminoDown();
@@ -276,8 +371,12 @@ function moveTetraminoDown() {
 }
 
 function moveTetraminoUp() {
+  // debugger;
+  const oldMatrix = JSON.parse(JSON.stringify(tetramino.matrix));
   rotateMatrix(tetramino.matrix);
-  // tetramino.row -= 1;
+  if (!isValid) {
+    tetramino.matrix = oldMatrix;
+  }
 }
 
 function moveTetraminoLeft() {
@@ -290,16 +389,6 @@ function moveTetraminoRight() {
   tetramino.column += 1;
   if (!isValid()) {
     tetramino.column -= 1;
-  }
-}
-
-let interval = 700;
-let intervalId = setInterval(gameLoop, interval);
-
-function gameLoop() {
-  if (pause) {
-    moveTetraminoDown();
-    draw();
   }
 }
 
@@ -353,7 +442,7 @@ function checkField() {
   }
   // score += lines * 10;
   updateScore(lines);
-  console.log("lines ", lines, "\nScore = ", score);
+  // console.log("lines ", lines, "\nScore = ", score);
 }
 
 function checkLine(row) {
@@ -381,8 +470,65 @@ function updateScore(lines) {
   console.log("lines ", lines, "\nScore = ", score);
 }
 
+function moveDown() {
+  if (!runGame) {
+    gameOver();
+    return;
+  }
+  // moveTetraminoDown();
+  // draw();
+
+  if (pause) {
+    moveTetraminoDown();
+    draw();
+  }
+  // cancelAnimationFrame(timtId);
+  // timtId = clearTimeout(timtId);
+  timeOutId = setTimeout(() => {
+    timeId = requestAnimationFrame(moveDown);
+  }, 700);
+}
+
+let timeId = null;
+let timeOutId = null;
+moveDown();
+
+// let interval = 700;
+// let intervalId = setInterval(()=>{requestAnimationFrame(gameLoop)}, interval);
+
+// let interval = 700;
+// let intervalId = setInterval(gameLoop, interval);
+
+// function gameLoop() {
+//   moveDown();
+//   if (pause) {
+//     moveTetraminoDown();
+//     draw();
+//   }
+// }
+
 function gameOver() {
+  cancelAnimationFrame(timeOutId);
+  timeId = clearTimeout(timeId);
   console.log(" G A M E  O V E R ");
-  clearInterval(intervalId);
+  // clearInterval(intervalId);
   runGame = false;
+  overlay.style.display = "flex";
+}
+
+function restart() {
+  tetramino = null;
+  document.querySelector(".grid").innerHTML = "";
+  generatePlayField();
+  cells = document.querySelectorAll(".grid div");
+  generateTetramino();
+  drawPlayField();
+  drawTetramino();
+  runGame = true;
+  // display: none;
+  overlay.style.display = "none";
+  score = 0;
+  updateScore(0);
+  draw();
+  moveDown();
 }
