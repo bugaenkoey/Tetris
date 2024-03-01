@@ -22,18 +22,30 @@ const PLAYFIELD_ROWS = 20;
 const TETROMINO_NAMES = ["O", "J", "L", "S", "Z", "T", "I"];
 
 let overlay = document.querySelector(".overlay");
+
 const btnRestart = document.querySelector(".btn-restart");
 btnRestart.addEventListener("click", () => {
-  // document.querySelector(".grid").innerHTML = "";
-  // overlay.style.display = "none";
   restart();
 });
 
+const btnRestartNow = document.querySelector(".btn-restart-now");
+btnRestartNow.addEventListener("click", () => {
+  restart();
+});
+let level = 0;
 let runGame = true;
 let score = 0;
 let scoreDiv = document.getElementById("score");
+let levelDiv = document.getElementById("level");
+let sound = document.querySelector("#sound"); // document.getElementById("sound");
+
+updateLevel();
 // changeRandomBackground();
 let pause = true;
+
+let interval = 700;
+let timeId = null;
+let timeOutId = null;
 
 const TETRAMINOES = {
   O: [
@@ -45,50 +57,30 @@ const TETRAMINOES = {
     [0, 1, 0],
     [0, 1, 0],
     [1, 1, 0],
-
-    // [ 1, 1],
-    // [ 1],
-    // [ 1]
   ],
 
   L: [
     [0, 1, 0],
     [0, 1, 0],
     [0, 1, 1],
-
-    // [1],
-    // [1],
-    // [1, 1]
   ],
 
   S: [
     [1, 0, 0],
     [1, 1, 0],
     [0, 1, 0],
-
-    // [1],
-    // [1, 1],
-    // [0, 1]
   ],
 
   Z: [
     [0, 1, 0],
     [1, 1, 0],
     [1, 0, 0],
-
-    // [0, 1],
-    // [1, 1],
-    // [1]
   ],
 
   T: [
     [0, 1, 0],
     [1, 1, 0],
     [0, 1, 0],
-
-    // [1],
-    // [1, 1],
-    // [1]
   ],
 
   I: [
@@ -96,13 +88,6 @@ const TETRAMINOES = {
     [0, 1, 0, 0],
     [0, 1, 0, 0],
     [0, 1, 0, 0],
-
-    // [1],
-    // [1],
-    // [1],
-    // [1]
-
-    // [1],[1],[1],[1]
   ],
 };
 
@@ -115,6 +100,11 @@ let tetramino;
 let nextPlayfielf;
 let nextTetramino;
 
+//document.querySelector("#sound")
+function togleSoundViev() {
+  sound.style.display = sound.style.display == "none" ? "flex" : "none";
+}
+
 function generateNextPlayField() {
   document.querySelector(".next").innerHTML = "";
   nextMatrixSize = nextTetramino.matrix.length;
@@ -123,52 +113,14 @@ function generateNextPlayField() {
       const div = document.createElement(`div`);
       if (nextTetramino.matrix[row][column]) {
         div.classList.add(nextTetramino.name);
-        // document.querySelector(".next").append(div);
       }
       div.classList.add("0");
       document.querySelector(".next").append(div);
     }
   }
-  // nextPlayfielf = new Array(nextMatrixSize)
-  //   .fill()
-  //   .map(() => new Array(nextMatrixSize).fill(0));
-
   document.querySelector(".next").style.gridTemplateColumns =
     "repeat(" + nextMatrixSize + ", auto)";
 }
-
-// function drawNextTetramino() {
-//   // debugger;
-//   const name = nextTetramino.name;
-//   const nextMatrixSize = nextTetramino.matrix.length;
-//   // console.log(tetraminoMatrixSize);
-//   debugger;
-//   for (let row = 0; row < nextMatrixSize; row++) {
-//     for (let column = 0; column < nextMatrixSize; column++) {
-//       try {
-//         if (!nextTetramino.matrix[row][column]) continue;
-//       } catch (error) {
-//         // console.log(error, "\n", row, " ", column);
-//       }
-//       //return row * PLAYFIELD_COLUMS + column;
-//       const cellIndex = row * nextMatrixSize + column; //convertPositionToIndex(
-//       //   nextTetramino.row,
-//       //   nextTetramino.column
-//       // );
-//       // console.log(cellIndex);
-//       // debugger;
-//       try {
-//         // debugger;
-//         nextCells[cellIndex].classList.add(name);
-//       } catch (error) {
-//         // console.log(" <<<<< --- Out --- >>>> ", error);
-//         // generateTetramino();
-//       }
-//       // console.log(cells);
-//       // if (!isValid()) generateTetramino();
-//     }
-//   }
-// }
 
 function generatePlayField() {
   for (let i = 0; i < PLAYFIELD_ROWS * PLAYFIELD_COLUMS; i++) {
@@ -219,8 +171,7 @@ function generateNextTetramino() {
   };
 
   generateNextPlayField();
-  nextPlaceTetramino();
-  // drawNextTetramino();
+  // nextPlaceTetramino();
 }
 
 function generateTetramino() {
@@ -266,7 +217,6 @@ function placeTetramino() {
 
 generatePlayField();
 generateTetramino();
-// generateNextTetramino();
 
 let cells = document.querySelectorAll(".grid div");
 
@@ -278,11 +228,7 @@ function drawPlayField() {
       const name = playfielf[row][column];
       const cellIndex = convertPositionToIndex(row, column);
       cells[cellIndex].classList.add(name);
-
-      // console.log(cells);
-      // debugger;
     }
-    // debugger;
     if (checkLine(row)) {
       console.log("line", row);
     }
@@ -290,31 +236,21 @@ function drawPlayField() {
 }
 
 function drawTetramino() {
-  // debugger;
   const name = tetramino.name;
   const tetraminoMatrixSize = tetramino.matrix.length;
-  // console.log(tetraminoMatrixSize);
 
   for (let row = 0; row < tetraminoMatrixSize; row++) {
     for (let column = 0; column < tetraminoMatrixSize; column++) {
       try {
         if (!tetramino.matrix[row][column]) continue;
-      } catch (error) {
-        // console.log(error, "\n", row, " ", column);
-      }
+      } catch (error) {}
       const cellIndex = convertPositionToIndex(
         tetramino.row + row,
         tetramino.column + column
       );
-      // console.log(cellIndex);
-      // debugger;
       try {
         cells[cellIndex].classList.add(name);
-      } catch (error) {
-        // console.log(" <<<<< --- Out --- >>>> ", error);
-        // generateTetramino();
-      }
-      // console.log(cells);
+      } catch (error) {}
       if (!isValid()) generateTetramino();
     }
   }
@@ -324,9 +260,8 @@ function draw() {
   cells.forEach((cell) => cell.removeAttribute("class"));
   drawPlayField();
   drawTetramino();
-
-  // drawNextTetramino();
 }
+
 draw();
 
 document.addEventListener("keydown", onKeyDown);
@@ -335,7 +270,6 @@ function onKeyDown(e) {
   if (!runGame) {
     return;
   }
-  // console.log(e);
   switch (e.key) {
     case "ArrowDown":
       moveTetraminoDown();
@@ -350,7 +284,7 @@ function onKeyDown(e) {
       moveTetraminoUp();
       break;
     case "Escape":
-      pause = !pause;
+      toglePause();
       break;
 
     case " ":
@@ -360,23 +294,26 @@ function onKeyDown(e) {
   }
   draw();
 }
-
-function moveTetraminoDown() {
-  tetramino.row += 1;
-  if (!isValid()) {
-    tetramino.row -= 1;
-    // generateTetramino();
-    placeTetramino();
-  }
+function toglePause() {
+  pause = !pause;
 }
 
 function moveTetraminoUp() {
-  // debugger;
   const oldMatrix = JSON.parse(JSON.stringify(tetramino.matrix));
   rotateMatrix(tetramino.matrix);
   if (!isValid) {
     tetramino.matrix = oldMatrix;
   }
+  draw();
+}
+
+function moveTetraminoDown() {
+  tetramino.row += 1;
+  if (!isValid()) {
+    tetramino.row -= 1;
+    placeTetramino();
+  }
+  draw();
 }
 
 function moveTetraminoLeft() {
@@ -384,15 +321,15 @@ function moveTetraminoLeft() {
   if (!isValid()) {
     tetramino.column += 1;
   }
+  draw();
 }
 function moveTetraminoRight() {
   tetramino.column += 1;
   if (!isValid()) {
     tetramino.column -= 1;
   }
+  draw();
 }
-
-// ==========
 
 function isValid() {
   const matrixsize = tetramino.matrix.length;
@@ -435,18 +372,16 @@ function checkField() {
   for (let row = playfielf.length - 1; row > 0; row--) {
     if (checkLine(row)) {
       lines++;
-      debugger;
+      level++;
+      updateLevel();
       muveDownPlayField(row);
       row++;
     }
   }
-  // score += lines * 10;
   updateScore(lines);
-  // console.log("lines ", lines, "\nScore = ", score);
 }
 
 function checkLine(row) {
-  // debugger;
   for (let column = 0; column < playfielf[row].length; column++) {
     if (playfielf[row][column] == 0) return false;
   }
@@ -459,15 +394,17 @@ function muveDownPlayField(row) {
       playfielf[row][column] = playfielf[row - 1][column];
     }
   }
-
   changeRandomBackground();
 }
 
 function updateScore(lines) {
   score += lines * 10 * lines;
-
   scoreDiv.innerText = "SCORE: " + score;
-  console.log("lines ", lines, "\nScore = ", score);
+  // console.log("lines ", lines, "\nScore = ", score);
+}
+
+function updateLevel() {
+  levelDiv.innerText = "LEVEL: " + level;
 }
 
 function moveDown() {
@@ -475,37 +412,16 @@ function moveDown() {
     gameOver();
     return;
   }
-  // moveTetraminoDown();
-  // draw();
-
   if (pause) {
     moveTetraminoDown();
     draw();
   }
-  // cancelAnimationFrame(timtId);
-  // timtId = clearTimeout(timtId);
   timeOutId = setTimeout(() => {
     timeId = requestAnimationFrame(moveDown);
-  }, 700);
+  }, interval - level);
 }
 
-let timeId = null;
-let timeOutId = null;
 moveDown();
-
-// let interval = 700;
-// let intervalId = setInterval(()=>{requestAnimationFrame(gameLoop)}, interval);
-
-// let interval = 700;
-// let intervalId = setInterval(gameLoop, interval);
-
-// function gameLoop() {
-//   moveDown();
-//   if (pause) {
-//     moveTetraminoDown();
-//     draw();
-//   }
-// }
 
 function gameOver() {
   cancelAnimationFrame(timeOutId);
@@ -517,6 +433,8 @@ function gameOver() {
 }
 
 function restart() {
+  level = 0;
+  interval = 700;
   tetramino = null;
   document.querySelector(".grid").innerHTML = "";
   generatePlayField();
