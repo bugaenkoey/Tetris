@@ -9,15 +9,33 @@
     <title>TETRIS</title>
   </head>
   <body>
-    <div class="next"></div>
     <div class="grid"></div>
     <div>
-      <audio controls autoplay loop muted id="mp3">
-        <source id="soumd" src="./media/pidmanula2.mp3" type="audio/mpeg" />
-        <!-- <source src="/media/muzyka-tetris.mp3" type="audio/mpeg" /> -->
-      </audio>
+      
+      
+      <div id="score""></div>
+      <div id="level"></div>
+      <button class="btn-restart-now control-buttons">Restart</button>
+      <button class="control-buttons" onclick="togleSoundViev()">Sound</button>
+      <button class="control-buttons" onclick="moveTetraminoLeft()">left</button>
+      <button class="control-buttons" onclick="moveTetraminoRight()">Right</button>
+      <button class="control-buttons" onclick="moveTetraminoUp()">Up</button>
+      <button class="control-buttons" onclick="moveTetraminoDown()">Down</button>
+      <button class="control-buttons" onclick="generateTetramino(),draw()">Space</button>
+      <button class="control-buttons" onclick="toglePause()">Esc</button>
+
+
+
+      <div class="next"></div>
+
+      <div id="sound">
+        <audio controls autoplay loop muted id="mp3">
+          <source  src="./media/pidmanula2.mp3" type="audio/mpeg" />
+          <!-- <source src="/media/muzyka-tetris.mp3" type="audio/mpeg" /> -->
+        </audio>
+      </div>
+
     </div>
-    <div id="score""></div>
     <div class="overlay">
       <button class="btn-restart">Restart</button>
     </div>
