@@ -4,10 +4,10 @@
 
 #mp3 {
     /* height: 10vh; */
-    background-color: aqua;
-    display: flex;
+    /* background-color: aqua; */
+    /* display: flex; */
     /* align-items: center; */
-    height: 4vmin;
+    /* height: 4vmin; */
     width: 4vmin*4;
 
 }
@@ -176,6 +176,8 @@ body {
     grid-template-columns: repeat(3, auto);
     gap: 0.5vmin;
     justify-content: center;
+    color: rgba(240, 248, 255, 0.7);
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .next>div {
@@ -191,7 +193,39 @@ body {
 }
 
 .control-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 15vmin;
     width: 15vmin;
-    border-radius: 30px;
+    border-radius: 5vmin;
+    color: rgba(240, 248, 255, 0.7);
+    background-color: rgba(0, 0, 0, 0.3);
+    font-size: 4vmin;
+    user-select: none;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* Три колонки */
+    grid-template-rows: repeat(3, auto);
+    /* Три ряди */
+    gap: 10px;
+    /* Відстань між елементами */
+    /* user-select: none; */
+}
+
+#score,
+#level {
+    font-size: 4vmin;
+    color: rgba(240, 248, 255, 0.7);
+    background-color: rgba(0, 0, 0, 0.3);
+    user-select: none;
+}
+
+
+#sound {
+    color: rgba(240, 248, 255, 0.7);
+    background-color: rgba(0, 0, 0, 0.3);
 }

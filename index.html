@@ -15,15 +15,16 @@
       
       <div id="score""></div>
       <div id="level"></div>
-      <button class="btn-restart-now control-buttons">Restart</button>
-      <button class="control-buttons" onclick="togleSoundViev()">Sound</button>
-      <button class="control-buttons" onclick="moveTetraminoLeft()">left</button>
-      <button class="control-buttons" onclick="moveTetraminoRight()">Right</button>
-      <button class="control-buttons" onclick="moveTetraminoUp()">Up</button>
-      <button class="control-buttons" onclick="moveTetraminoDown()">Down</button>
-      <button class="control-buttons" onclick="generateTetramino(),draw()">Space</button>
-      <button class="control-buttons" onclick="toglePause()">Esc</button>
-
+      <div class="grid-container">
+        <button class="control-buttons" id="generateTetramino" onclick="generateTetramino(),draw()">Space</button>
+        <button class="control-buttons" id="sounds" onclick="togleSoundViev()">Sound</button>
+        <button class="control-buttons" id="up" onclick="moveTetraminoUp()">Up</button>
+        <button class="control-buttons" id="left" onclick="moveTetraminoLeft()">left</button>
+        <button class="control-buttons" id="pause" onclick="toglePause()">Esc</button>
+        <button class="control-buttons" id="right" onclick="moveTetraminoRight()">Right</button>
+        <button class="control-buttons btn-restart-now ">Restart</button>
+        <button class="control-buttons" id="down" onclick="moveTetraminoDown()">Down</button>
+</div>  
 
 
       <div class="next"></div>
