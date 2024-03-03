@@ -271,6 +271,9 @@ function onKeyDown(e) {
     return;
   }
   switch (e.key) {
+    case " ":
+      moveTetraminoDropDown();
+      break;
     case "ArrowDown":
       moveTetraminoDown();
       break;
@@ -287,7 +290,7 @@ function onKeyDown(e) {
       toglePause();
       break;
 
-    case " ":
+    case "1":
       generateTetramino();
       break;
     // Space
@@ -304,6 +307,15 @@ function moveTetraminoUp() {
   if (!isValid) {
     tetramino.matrix = oldMatrix;
   }
+  draw();
+}
+
+function moveTetraminoDropDown() {
+  while (isValid()) {
+    tetramino.row++;
+  }
+  tetramino.row--;
+  placeTetramino();
   draw();
 }
 

@@ -3,40 +3,64 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" type="image/x-icon" href="./Img/tetris.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="./Img/tetris.ico" />
 
     <link rel="stylesheet" href="./style.css" />
     <title>TETRIS</title>
   </head>
   <body>
     <div class="grid"></div>
-    <div>
-      
-      
-      <div id="score""></div>
+    <!-- <div class="wrapper"> -->
+    <div class="score-level">
+      <div id="score"></div>
       <div id="level"></div>
-      <div class="grid-container">
-        <button class="control-buttons" id="generateTetramino" onclick="generateTetramino(),draw()">Space</button>
-        <button class="control-buttons" id="sounds" onclick="togleSoundViev()">Sound</button>
-        <button class="control-buttons" id="up" onclick="moveTetraminoUp()">Up</button>
-        <button class="control-buttons" id="left" onclick="moveTetraminoLeft()">left</button>
-        <button class="control-buttons" id="pause" onclick="toglePause()">Esc</button>
-        <button class="control-buttons" id="right" onclick="moveTetraminoRight()">Right</button>
-        <button class="control-buttons btn-restart-now ">Restart</button>
-        <button class="control-buttons" id="down" onclick="moveTetraminoDown()">Down</button>
-</div>  
-
-
       <div class="next"></div>
-
-      <div id="sound">
-        <audio controls autoplay loop muted id="mp3">
-          <source  src="./media/pidmanula2.mp3" type="audio/mpeg" />
-          <!-- <source src="/media/muzyka-tetris.mp3" type="audio/mpeg" /> -->
-        </audio>
-      </div>
-
     </div>
+    <div class="grid-container grid-container-left">
+      <button class="control-buttons" id="sounds" onclick="togleSoundViev()">
+        Sound
+      </button>
+      <button class="control-buttons" id="left" onclick="moveTetraminoLeft()">
+        left
+      </button>
+      <button class="control-buttons" id="pause" onclick="toglePause()">
+        Esc <br />Pause
+      </button>
+      <button class="control-buttons btn-restart-now">Restart</button>
+    </div>
+    <div class="grid-container grid-container-right">
+      <button
+        class="control-buttons"
+        id="generateTetramino"
+        onclick="generateTetramino(),draw()"
+      >
+        New <br />figure
+      </button>
+      <button class="control-buttons" id="up" onclick="moveTetraminoUp()">
+        Up <br />Turn
+      </button>
+      <button class="control-buttons" id="right" onclick="moveTetraminoRight()">
+        Right
+      </button>
+      <button class="control-buttons" id="down" onclick="moveTetraminoDown()">
+        Down
+      </button>
+      <button
+        class="control-buttons"
+        id="drop"
+        onclick="moveTetraminoDropDown()"
+      >
+        Drop <br />Space
+      </button>
+    </div>
+
+    <div id="sound">
+      <audio controls autoplay loop muted id="mp3">
+        <source src="./media/pidmanula2.mp3" type="audio/mpeg" />
+        <!-- <source src="/media/muzyka-tetris.mp3" type="audio/mpeg" /> -->
+      </audio>
+    </div>
+    <!-- </div> -->
     <div class="overlay">
       <button class="btn-restart">Restart</button>
     </div>
