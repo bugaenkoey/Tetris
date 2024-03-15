@@ -38,6 +38,7 @@ let score = 0;
 let scoreDiv = document.getElementById("score");
 let levelDiv = document.getElementById("level");
 let sound = document.querySelector("#sound"); // document.getElementById("sound");
+let duration = document.querySelector("#duration");
 
 updateLevel();
 // changeRandomBackground();
@@ -46,6 +47,27 @@ let pause = true;
 let interval = 700;
 let timeId = null;
 let timeOutId = null;
+// Отримання часу відкриття сторінки
+let startTime = Date.now();
+let user = { dataTime: "19.2.2024", score: 0, name: "1" };
+let scoretable = [user];
+
+function setlocalStorage(dataTime, score, name) {
+  const KEY = "scoretable";
+  scoretable.push(getlocalStorage(KEY));
+  let user = { dataTime: dataTime, score: score, name: name };
+  scoretable.push(user);
+  // JSON.stringify(obj) JSON.parse(string);
+  localStorage.setItem(KEY, JSON.stringify(scoretable));
+}
+
+function getlocalStorage(KEY) {
+  let ls = localStorage.getItem(KEY);
+  // scoretable = JSON.parse(ls);
+  return JSON.parse(ls);
+}
+setlocalStorage(startTime, 0, "I am");
+console.log(localStorage.getItem("scoretable"));
 
 const TETRAMINOES = {
   O: [
@@ -256,10 +278,27 @@ function drawTetramino() {
   }
 }
 
+function gameTime() {
+  // Отримання поточного часу
+  let currentTime = Date.now();
+
+  // Обчислення тривалості відкриття сторінки
+  let durationTime = currentTime - startTime;
+  let time =
+    parseInt((durationTime / (1000 * 60 * 60)) % 24) +
+    ":" +
+    parseInt((durationTime / (1000 * 60)) % 60) +
+    ":" +
+    parseInt((durationTime / 1000) % 60);
+  // console.log(time, durationTime);
+  duration.innerText = time;
+}
+
 function draw() {
   cells.forEach((cell) => cell.removeAttribute("class"));
   drawPlayField();
   drawTetramino();
+  gameTime();
 }
 
 draw();
@@ -412,7 +451,6 @@ function muveDownPlayField(row) {
 function updateScore(lines) {
   score += lines * 10 * lines;
   scoreDiv.innerText = "SCORE: " + score;
-  // console.log("lines ", lines, "\nScore = ", score);
 }
 
 function updateLevel() {
@@ -438,8 +476,7 @@ moveDown();
 function gameOver() {
   cancelAnimationFrame(timeOutId);
   timeId = clearTimeout(timeId);
-  console.log(" G A M E  O V E R ");
-  // clearInterval(intervalId);
+  // console.log(" G A M E  O V E R ");
   runGame = false;
   overlay.style.display = "flex";
 }
@@ -455,10 +492,12 @@ function restart() {
   drawPlayField();
   drawTetramino();
   runGame = true;
-  // display: none;
   overlay.style.display = "none";
   score = 0;
   updateScore(0);
   draw();
   moveDown();
+
+  cancelAnimationFrame(timeOutId);
+  timeId = clearTimeout(timeId);
 }
