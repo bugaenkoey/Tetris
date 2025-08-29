@@ -1,6 +1,6 @@
-* {
+/* * {
     margin: 0;
-}
+} */
 
 
 @keyframes animatedCube {
@@ -31,13 +31,21 @@ body {
     animation-iteration-count: infinite;
 
     animation: animatedCube 15s linear infinite;
-    height: 100vh;
-    display: flex;
-    justify-content: space-evenly;
     align-items: center;
+
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    /* прибирає скрол */
 
 }
 
+.block {
+    display: flex;
+    justify-content: center;
+}
 
 
 .overlay {
