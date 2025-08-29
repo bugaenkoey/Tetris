@@ -32,6 +32,7 @@ const btnRestartNow = document.querySelector(".btn-restart-now");
 btnRestartNow.addEventListener("click", () => {
   restart();
 });
+let userName = "";
 let level = 0;
 let runGame = true;
 let score = 0;
@@ -39,6 +40,7 @@ let scoreDiv = document.getElementById("score");
 let levelDiv = document.getElementById("level");
 let sound = document.querySelector("#sound"); // document.getElementById("sound");
 let duration = document.querySelector("#duration");
+let tablescore = document.querySelector("#tablescore");
 
 updateLevel();
 // changeRandomBackground();
@@ -49,25 +51,37 @@ let timeId = null;
 let timeOutId = null;
 // Отримання часу відкриття сторінки
 let startTime = Date.now();
-let user = { dataTime: "19.2.2024", score: 0, name: "1" };
-let scoretable = [user];
+const KEY = "scoretable";
 
-function setlocalStorage(dataTime, score, name) {
-  const KEY = "scoretable";
-  scoretable.push(getlocalStorage(KEY));
-  let user = { dataTime: dataTime, score: score, name: name };
-  scoretable.push(user);
-  // JSON.stringify(obj) JSON.parse(string);
-  localStorage.setItem(KEY, JSON.stringify(scoretable));
+function setTable(key, score, name = "-") {
+  let user = { dataTime: Date.now(), score: score, name: name };
+  let users = getTable(key);
+  localStorage.removeItem(key);
+  users.push(user);
+  let top = getTopScore(users, 10);
+  localStorage.setItem(key, JSON.stringify(top));
 }
 
-function getlocalStorage(KEY) {
-  let ls = localStorage.getItem(KEY);
+function getTopScore(arr, size) {
+  //функція сортування по імені
+  function sortScore(a, b) {
+    if (a.score > b.score) return -1;
+    if (a.score < b.score) return 1;
+    return 0;
+  }
+
+  let sortArr = arr.sort(sortScore);
+  let top = sortArr.slice(0, size);
+  return top;
+}
+
+function getTable(key) {
+  let ls = localStorage.getItem(key);
   // scoretable = JSON.parse(ls);
-  return JSON.parse(ls);
+  return JSON.parse(ls) || [];
 }
-setlocalStorage(startTime, 0, "I am");
-console.log(localStorage.getItem("scoretable"));
+// setlocalStorage(startTime, 0, "I am");
+// console.log(JSON.parse(localStorage.getItem(KEY)));
 
 const TETRAMINOES = {
   O: [
@@ -303,6 +317,40 @@ function draw() {
 
 draw();
 
+//++++++++++++++++++++++++++++
+let startX = 0;
+let endX = 0;
+const threshold = 50; // мін. відстань для свайпу
+
+document.addEventListener(
+  "touchstart",
+  (e) => {
+    startX = e.touches[0].clientX;
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "touchend",
+  (e) => {
+    endX = e.changedTouches[0].clientX;
+    let diff = endX - startX;
+
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) {
+        // свайп вправо
+        moveTetraminoRight();
+      } else {
+        // свайп вліво
+        moveTetraminoLeft();
+      }
+    }
+  },
+  { passive: false }
+);
+
+//-------------------------
+
 document.addEventListener("keydown", onKeyDown);
 
 function onKeyDown(e) {
@@ -390,7 +438,7 @@ function isValid() {
       if (isOutsideOfGameboard(row, column)) {
         return false;
       }
-      if (hasCollision(row, column) && tetramino.row == 0) {
+      if (hasCollision(row, column) && tetramino.row == 0 && runGame) {
         gameOver();
         return false;
       }
@@ -459,7 +507,7 @@ function updateLevel() {
 
 function moveDown() {
   if (!runGame) {
-    gameOver();
+    // gameOver();
     return;
   }
   if (pause) {
@@ -479,9 +527,17 @@ function gameOver() {
   // console.log(" G A M E  O V E R ");
   runGame = false;
   overlay.style.display = "flex";
+
+  document.querySelector("#scoreovervay").innerText = score;
+  createTableScore();
+}
+
+function setName(event) {
+  userName = event.target.value;
 }
 
 function restart() {
+  setTable(KEY, score, userName);
   level = 0;
   interval = 700;
   tetramino = null;
@@ -494,10 +550,27 @@ function restart() {
   runGame = true;
   overlay.style.display = "none";
   score = 0;
-  updateScore(0);
+  // updateScore(0);
   draw();
   moveDown();
 
   cancelAnimationFrame(timeOutId);
   timeId = clearTimeout(timeId);
 }
+
+function createTableScore() {
+  debugger;
+  let table = getTable(KEY);
+
+  let tbl = document.createElement("table");
+  table.forEach((p) => {
+    const tr = tbl.insertRow();
+
+    const td = tr.insertCell();
+    td.appendChild(document.createTextNode(p.name));
+    const td1 = tr.insertCell();
+    td1.appendChild(document.createTextNode(p.score));
+  });
+  tablescore.appendChild(tbl);
+}
+// createTableScore();

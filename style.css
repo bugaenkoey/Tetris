@@ -193,3 +193,14 @@ body {
     bottom: 0vmin;
     position: absolute;
 }
+
+#scoreovervay {
+    background-color: gold;
+    color: blue;
+}
+
+#tablescore {
+
+    background-color: blue;
+    color: gold;
+}
