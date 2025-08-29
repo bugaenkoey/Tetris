@@ -340,9 +340,12 @@ document.addEventListener(
       if (diff > 0) {
         // свайп вправо
         moveTetraminoRight();
+        console.log("свайп вправо");
       } else {
         // свайп вліво
         moveTetraminoLeft();
+
+        console.log("свайп вліво");
       }
     }
   },
