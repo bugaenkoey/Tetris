@@ -317,7 +317,41 @@ function draw() {
 
 draw();
 
-//++++++++++++++++++++++++++++
+//+++++++++++++++ -- SVIPE --  +++++++++++++
+let startY = 0;
+let endY = 0;
+const thresholdY = 50; // мін. відстань для свайпу
+
+document.addEventListener(
+  "touchstart",
+  (e) => {
+    startY = e.touches[0].clientY;
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "touchend",
+  (e) => {
+    endY = e.changedTouches[0].clientY;
+    let diffY = endY - startY;
+
+    if (Math.abs(diffY) > thresholdY) {
+      if (diffY > 0) {
+        // свайп в низ
+        moveTetraminoDropDown();
+        console.log("свайп в низ");
+      } else {
+        // свайп в верх
+        moveTetraminoUp();
+
+        console.log("свайп в верх");
+      }
+    }
+  },
+  { passive: false }
+);
+
 let startX = 0;
 let endX = 0;
 const threshold = 50; // мін. відстань для свайпу
