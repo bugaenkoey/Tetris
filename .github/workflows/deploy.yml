@@ -32,8 +32,8 @@ jobs:
             --delete
 
       # 4. CloudFront cache invalidation
-      - name: Invalidate CloudFront cache
-        run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRI }} \
-            --paths "/*"
+      # - name: Invalidate CloudFront cache
+      #   run: |
+      #     aws cloudfront create-invalidation \
+      #       --distribution-id ${{ secrets.CLOUDFRONT_DISTRI }} \
+      #       --paths "/*"
